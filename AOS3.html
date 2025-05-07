@@ -1,0 +1,170 @@
+html <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Desayunos Sorpresa Arcoíris</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Raleway -->
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+  <style>
+    body {
+      font-family: 'Raleway', sans-serif;
+      background: linear-gradient(to right, #1F1C2C, #928DAB, #F8F9FA);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="w-full max-w-xl bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-xl animate__animated animate__fadeInDown">
+    <h1 class="text-3xl font-bold text-white text-center mb-4 animate__animated animate__fadeInDown">🎁 Desayunos Sorpresa Arcoíris</h1>
+    <p class="text-white text-center mb-6 animate__animated animate__fadeIn">Haz tu pedido especial para sorprender a quien más quieres 🌈</p>
+
+    <div class="space-y-4 animate__animated animate__fadeInUp">
+      <input id="ubicacion" type="text" placeholder="📍 Ubicación de entrega" class="w-full p-3 rounded bg-white/20 text-white placeholder-white/70">
+      <input id="fecha" type="date" class="w-full p-3 rounded bg-white/20 text-white placeholder-white/70">
+      <input id="hora" type="time" class="w-full p-3 rounded bg-white/20 text-white placeholder-white/70">
+      <input id="dedicatoria" type="text" placeholder="💌 Dedicatoria especial" class="w-full p-3 rounded bg-white/20 text-white placeholder-white/70">
+
+      <select id="motivo" class="w-full p-3 rounded bg-white/20 text-white">
+        <option value="">🎉 Selecciona un motivo</option>
+        <option>Cumpleaños 🎂</option>
+        <option>Aniversario 💖</option>
+        <option>Gracias 🙏</option>
+        <option>Nacimiento 👶</option>
+        <option>Otro 🌟</option>
+      </select>
+
+      <div>
+        <p class="text-white font-semibold mb-2">🍱 Elige un tipo de desayuno:</p>
+        <div class="grid grid-cols-3 gap-3">
+          <div onclick="seleccionarDesayuno(this, 'Clásico 🥐')" class="cursor-pointer rounded overflow-hidden border-4 border-transparent hover:border-pink-400" data-img="https://i.imgur.com/UHxXfC9.jpg">
+            <img src="https://i.imgur.com/UHxXfC9.jpg" alt="Clásico" class="w-full h-24 object-cover">
+            <p class="text-center text-white mt-1 text-sm">Clásico 🥐</p>
+          </div>
+          <div onclick="seleccionarDesayuno(this, 'Fitness 🥗')" class="cursor-pointer rounded overflow-hidden border-4 border-transparent hover:border-pink-400" data-img="https://i.imgur.com/HkYgRQL.jpg">
+            <img src="https://i.imgur.com/HkYgRQL.jpg" alt="Fitness" class="w-full h-24 object-cover">
+            <p class="text-center text-white mt-1 text-sm">Fitness 🥗</p>
+          </div>
+          <div onclick="seleccionarDesayuno(this, 'Dulce 🧁')" class="cursor-pointer rounded overflow-hidden border-4 border-transparent hover:border-pink-400" data-img="https://i.imgur.com/oSglgJX.jpg">
+            <img src="https://i.imgur.com/oSglgJX.jpg" alt="Dulce" class="w-full h-24 object-cover">
+            <p class="text-center text-white mt-1 text-sm">Dulce 🧁</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-white mt-4">
+        <p class="mb-2 font-semibold">🍽️ Selecciona productos adicionales:</p>
+        <div class="grid grid-cols-2 gap-2">
+          <label><input type="checkbox" class="mr-2" value="Café ☕">Café</label>
+          <label><input type="checkbox" class="mr-2" value="Jugo 🧃">Jugo</label>
+          <label><input type="checkbox" class="mr-2" value="Fruta 🍓">Fruta</label>
+          <label><input type="checkbox" class="mr-2" value="Sandwich 🥪">Sandwich</label>
+          <label><input type="checkbox" class="mr-2" value="Cupcake 🧁">Cupcake</label>
+          <label><input type="checkbox" class="mr-2" value="Yogurt 🥣">Yogurt</label>
+        </div>
+      </div>
+
+      <button onclick="generarPedido()" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-xl text-lg font-semibold transition duration-300 animate__animated animate__fadeInUp">
+        Generar Pedido 🌞
+      </button>
+    </div>
+
+    <div id="resultado" class="mt-6 text-white animate__animated hidden"></div>
+
+    <div id="btnWhatsApp" class="mt-4 hidden">
+      <a id="linkWA" href="#" target="_blank" class="w-full inline-block text-center bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-xl font-semibold transition duration-300 animate__animated animate__fadeInUp">
+        📲 Compartir por WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const frases = [
+      "Cada desayuno cuenta una historia.",
+      "Un detalle que ilumina la mañana.",
+      "El amor también se desayuna.",
+      "Sorpresas que alimentan el alma.",
+      "Sabores que abrazan el corazón."
+    ];
+
+    let desayunoSeleccionado = "";
+    let imagenSeleccionada = "";
+
+    function seleccionarDesayuno(element, nombre) {
+      document.querySelectorAll('[onclick^="seleccionarDesayuno"]').forEach(el => {
+        el.classList.remove("border-pink-400");
+      });
+      element.classList.add("border-pink-400");
+      desayunoSeleccionado = nombre;
+      imagenSeleccionada = element.getAttribute("data-img");
+    }
+
+    function generarPedido() {
+      const ubicacion = document.getElementById("ubicacion").value.trim();
+      const fecha = document.getElementById("fecha").value;
+      const hora = document.getElementById("hora").value;
+      const dedicatoria = document.getElementById("dedicatoria").value.trim();
+      const motivo = document.getElementById("motivo").value;
+      const productos = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+
+      if ([ubicacion, fecha, hora, dedicatoria, motivo].includes("") || productos.length === 0 || !desayunoSeleccionado) {
+        document.querySelectorAll("input, select").forEach(el => {
+          if (el.value.trim() === "") {
+            el.classList.add("animate__animated", "animate__shakeX");
+            setTimeout(() => el.classList.remove("animate__animated", "animate__shakeX"), 800);
+          }
+        });
+        if (!desayunoSeleccionado) {
+          alert("Por favor selecciona un tipo de desayuno.");
+        }
+        return;
+      }
+
+      const mensaje = `
+        <div class="animate__animated animate__fadeIn mt-4 bg-white/20 p-4 rounded-xl shadow-lg">
+          <h2 class="text-xl font-bold mb-2">🎉 Pedido Confirmado</h2>
+          <p><strong>📍 Entregar en:</strong> ${ubicacion}</p>
+          <p><strong>📅 Fecha:</strong> ${fecha}</p>
+          <p><strong>🕒 Hora:</strong> ${hora}</p>
+          <p><strong>💌 Dedicatoria:</strong> "${dedicatoria}"</p>
+          <p><strong>🎈 Motivo:</strong> ${motivo}</p>
+          <p><strong>🍱 Desayuno elegido:</strong> ${desayunoSeleccionado}</p>
+          <img src="${imagenSeleccionada}" alt="${desayunoSeleccionado}" class="w-full h-40 object-cover rounded-lg mt-2">
+          <p><strong>🍽️ Productos:</strong> ${productos.join(", ")}</p>
+          <p class="mt-3 italic">✨ ${frases[Math.floor(Math.random() * frases.length)]}</p>
+        </div>
+      `;
+
+      const resultado = document.getElementById("resultado");
+      resultado.innerHTML = mensaje;
+      resultado.classList.remove("hidden");
+
+      const mensajeWA = `Hola! Quiero hacer un pedido especial en *Desayunos Sorpresa Arcoíris*:%0A
+📍 *Ubicación:* ${ubicacion}%0A
+📅 *Fecha:* ${fecha}%0A
+🕒 *Hora:* ${hora}%0A
+🎈 *Motivo:* ${motivo}%0A
+🍱 *Desayuno elegido:* ${desayunoSeleccionado}%0A
+🍽️ *Productos:* ${productos.join(", ")}%0A
+💌 *Dedicatoria:* ${dedicatoria}%0A
+✨ ${frases[Math.floor(Math.random() * frases.length)]}`;
+
+      const linkWA = `https://wa.me/?text=${encodeURIComponent(mensajeWA)}`;
+      document.getElementById("linkWA").href = linkWA;
+      document.getElementById("btnWhatsApp").classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>
